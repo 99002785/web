@@ -1,13 +1,42 @@
-app.post('/miPlayers', (req, res) => {
-    if (miPlayers.length == 0)
+app.get("/srhPlayers/:id", (req, res) => {
+    const srhPlayerid = req.params.id;
+    if (srhPlayers.length == 0) {
+        readData();
+    }
+    let foundRec = srhPlayers.find((e) => e.srhPlayerId == srhPlayerid);
+    if (foundRec == null)
+        throw "Player not found";
+    res.send(JSON.stringify(foundRec))
+})
+
+app.put("/srhPlayers", (req, res) => {
+    if (srhPlayers.length == 0)
+        readData();
+    let body = req.body;
+
+    for (let index = 0; index < srhPlayers.length; index++) {
+        let element = srhPlayers[index];
+        if (element.srhPlayerId == body.srhPlayerId) {
+            element.srhPlayerName = body.srhPlayerName;
+            element.srhPlayerAddress = body.srhPlayerAddress;
+            element.srhPlayerSalary = body.srhPlayerSalary;
+            saveData();
+            res.send("Player updated successfully");
+        }
+    }
+
+})
+
+app.post('/srhPlayers', (req, res) => {
+    if (srhPlayers.length == 0)
         readData();
     let body = req.body;
 
 
 
-    for (let index = 0; index < miPlayers.length; index++) {
-        let element = miPlayers[index];
-        if (element.miPlayerName == body.miPlayerName) {
+    for (let index = 0; index < srhPlayers.length; index++) {
+        let element = srhPlayers[index];
+        if (element.srhPlayerName == body.srhPlayerName) {
             res.send("Player name already exists");
             flag = 0;
         }
@@ -16,7 +45,7 @@ app.post('/miPlayers', (req, res) => {
 
 
     if (flag >= 1) {
-        miPlayers.push(body);
+        srhPlayers.push(body);
         saveData();
         res.send("Player added successfully");
     }
